@@ -1,0 +1,1 @@
+{"schema":{"type":"struct","fields":[{"field":"timestamp","optional":false,"type":"int64"},{"field":"curr","optional":false,"type":"string"},{"field":"xcurr","optional":false,"type":"string"},{"field":"price","optional":false,"type":"double"}],"optional":false,"name":"forex"},"payload":{"timestamp":134,"curr":"ETH","xcurr":"USD","price":1.23}}

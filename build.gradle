@@ -1,0 +1,97 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'com.palantir.docker' version '0.26.0'
+    id 'java'
+    id 'distribution'
+}
+
+group 'hu.lsm'
+version "${confluent_version}-0.1"
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://packages.confluent.io/maven/"
+    }
+    maven {
+        url "https://repository.mulesoft.org/nexus/content/repositories/public/"
+    }
+}
+
+dependencies {
+
+    implementation group: 'org.apache.kafka', name: 'kafka_2.13', version: "${confluent_version}-ccs"
+    implementation group: 'org.apache.kafka', name: 'kafka-clients', version: "${confluent_version}-ccs"
+    implementation group: 'org.apache.kafka', name: 'connect-api', version: "${confluent_version}-ccs"
+    implementation group: 'org.apache.kafka', name: 'connect-runtime', version: "${confluent_version}-ccs"
+    implementation group: 'org.apache.kafka', name: 'kafka-tools', version: "${confluent_version}-ccs"
+
+    implementation group: 'io.confluent', name: 'common-utils', version: "${confluent_version}"
+    implementation group: 'io.confluent', name: 'common-config', version: "${confluent_version}"
+    implementation group: 'io.confluent', name: 'kafka-avro-serializer', version: "${confluent_version}"
+    implementation group: 'io.confluent', name: 'kafka-protobuf-serializer', version: "${confluent_version}"
+
+    implementation group: 'io.confluent', name: 'kafka-connect-avro-converter', version: "${confluent_version}"
+    implementation group: 'io.confluent', name: 'kafka-connect-avro-data', version: "${confluent_version}"
+    implementation group: 'io.confluent', name: 'kafka-json-serializer', version: "${confluent_version}"
+    implementation group: 'io.confluent', name: 'kafka-connect-json-schema-converter', version: "${confluent_version}"
+    implementation group: 'com.github.everit-org.json-schema', name: 'org.everit.json.schema', version: '1.12.2'
+
+    implementation group: 'io.confluent', name: 'kafka-schema-registry', version: "${confluent_version}"
+    implementation group: 'io.confluent', name: 'kafka-schema-registry-client', version: "${confluent_version}"
+    implementation group: 'io.confluent', name: 'kafka-json-schema-serializer', version: "${confluent_version}"
+    implementation group: 'io.confluent', name: 'kafka-serde-tools-package', version: "${confluent_version}", ext: 'pom'
+
+    implementation group: 'io.confluent', name: 'kafka-connect-jdbc', version: '10.0.2'
+
+    // JDBC connectors
+    // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
+    implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.34.0'
+    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.23'
+    // https://mvnrepository.com/artifact/org.postgresql/postgresql
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.19'
+    // https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc8
+    implementation group: 'com.oracle.database.jdbc', name: 'ojdbc8', version: '21.1.0.0'
+    // https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc
+    implementation group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '9.2.1.jre8'
+
+    //OTHER deps
+    implementation group: 'org.antlr', name: 'antlr4', version: '4.9.2'
+    implementation group: 'javax.resource', name: 'javax.resource-api', version: '1.7.1'
+    compileOnly group: 'javax.resource', name: 'connector-api', version: '1.5'
+
+}
+
+task copyDependencies(type: Copy) {
+    from configurations.default
+    into 'build/dependencies'
+}
+
+task dockerPrepareDependencies (dependsOn: copyDependencies) {
+    inputs.dir 'config'
+    inputs.dir 'build/dependencies'
+    inputs.dir 'bin'
+
+    outputs.dir "${buildDir}/docker/"
+
+    doLast {
+        copy {
+            from "/bin"
+            into "${buildDir}/docker/bin"
+        }
+        copy {
+            from "/config"
+            into "${buildDir}/docker/config"
+        }
+        copy {
+            from '/build/dependencies'
+            into "${buildDir}/docker/build/dependencies"
+        }
+    }
+}
+
+docker {
+    dependsOn(dockerPrepareDependencies)
+    name "${project.name}:${project.version}"
+}
