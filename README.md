@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Flsmhun%2Fkafka-connect-wrapper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Flsmhun%2Fkafka-connect-wrapper?ref=badge_shield)
+
 Kafka connect wrapper
 =====================
 
@@ -37,3 +39,6 @@ Documentation
 You can find some development documentation [here](docs/dev_instructions.md).
 
 Some additional articles, notes are available [here](docs/descr_en.md)
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Flsmhun%2Fkafka-connect-wrapper.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Flsmhun%2Fkafka-connect-wrapper?ref=badge_large)
