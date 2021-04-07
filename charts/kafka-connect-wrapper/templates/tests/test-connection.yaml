@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "kafka-connect-wrapper.fullname" . }}-test-connection"
+  labels:
+    {{- include "kafka-connect-wrapper.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "kafka-connect-wrapper.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never

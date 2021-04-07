@@ -6,7 +6,7 @@ docker run -d --rm -l test=test02 \
     --volume /$CURRENT_DIR/sink:/opt/connect-config/sink  \
     --volume /$CURRENT_DIR/worker:/opt/connect-config/worker  \
     --volume /$CURRENT_DIR/out:/opt/out  \
-    docker.io/library/kafka-connect-wrapper:6.1.0-0.1-SNAPSHOT
+    docker.io/library/kafka-connect-wrapper:6.1.0-0.1
 echo "Waiting 10 seconds to start"
 sleep 10
 cd ../../bin

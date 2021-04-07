@@ -1,0 +1,16 @@
+apiVersion: v2
+name: kafka-connect-wrapper
+description: Kafka Connect wrapper helm chart
+
+home: https://github.com/lsmhun/kafka-connect-wrapper
+
+icon: https://github.com/lsmhun/kafka-connect-wrapper/tree/main/docs/kcw.png
+
+keywords:
+  - kafka connect
+
+type: application
+
+version: 0.1.0
+
+appVersion: "6.1.0-0.1"

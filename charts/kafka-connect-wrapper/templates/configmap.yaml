@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-connect-wrapper-configmap
+data:
+  worker.properties: |-
+    client.id={{ .Release.Name }}-client
+    rest.port={{ .Values.service.port }}
+    group.id={{ .Release.Name }}-groupId
+
+    bootstrap.servers= {{ .Values.connectConfig.worker.bootstrap }}
+
+    error.tolerance={{ .Values.connectConfig.worker.keyConverter }}
+    topic={{ .Values.connectConfig.topics }}
+
+    key.converter={{ .Values.connectConfig.worker.keyConverter }}
+    key.converter.schemas.enable={{ .Values.connectConfig.worker.keyConverterSchemasEnable }}
+    key.converter.schema.registry.url={{ .Values.connectConfig.worker.keyConverterSchemasRegistryUrl }}
+    value.converter={{ .Values.connectConfig.worker.valueConverter }}
+    value.converter.schemas.enable={{ .Values.connectConfig.worker.errorTolerance }}
+    value.converter.schema.registry.url={{ .Values.connectConfig.worker.valueConverterSchemasRegistryUrl }}
+
+    offset.storage.file.filename=/tmp/offset
+  source.properties: |-
+    name={{ .Release.Name }}-source
+    key.converter={{ .Values.connectConfig.source.keyConverter }}
+    key.converter.schemas.enable={{ .Values.connectConfig.source.keyConverterSchemasEnable }}
+    key.converter.schema.registry.url={{ .Values.connectConfig.source.keyConverterSchemasRegistryUrl }}
+    value.converter={{ .Values.connectConfig.source.valueConverter }}
+    value.converter.schemas.enable={{ .Values.connectConfig.source.valueConverterSchemasEnable }}
+    value.converter.schema.registry.url={{ .Values.connectConfig.source.valueConverterSchemasRegistryUrl }}
+    file={{ .Values.connectConfig.source.file }}
+
+  sink.properties: |-
+    name={{ .Release.Name }}-sink
+    connector.class={{ .Values.connectConfig.sink.connectorClass }}
+    tasks.max=1
+    error.tolerance={{ .Values.connectConfig.sink.errorTolerance }}
+    key.converter={{ .Values.connectConfig.sink.keyConverter }}
+    key.converter.schemas.enable={{ .Values.connectConfig.sink.keyConverterSchemasEnable }}
+    key.converter.schema.registry.url={{ .Values.connectConfig.sink.keyConverterSchemasRegistryUrl }}
+    value.converter={{ .Values.connectConfig.sink.valueConverter }}
+    value.converter.schemas.enable={{ .Values.connectConfig.sink.valueConverterSchemasEnable }}
+    value.converter.schema.registry.url={{ .Values.connectConfig.sink.valueConverterSchemasRegistryUrl }}
+    file={{ .Values.connectConfig.sink.file }}
+
+    auto.create=true
+    auto.evolve=true
+
+    topics={{ .Values.connectConfig.topics }}
+    connection.url={{ .Values.connectConfig.sink.connectionUrl }}
+  log4j: |-
+    log4j.rootLogger={{ .Values.connectConfig.logLevel }}, stdout
+
+    log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+    log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+    log4j.appender.stdout.layout.ConversionPattern=[%d] %p %m (%c:%L)%n
+
+    log4j.logger.org.apache.zookeeper=ERROR
+    log4j.logger.org.I0Itec.zkclient=ERROR
+    log4j.logger.org.reflections=ERROR
+
+
+    log4j.appender.kafkaConnectRestAppender=org.apache.log4j.DailyRollingFileAppender
+    log4j.appender.kafkaConnectRestAppender.DatePattern='.'yyyy-MM-dd-HH
+    log4j.appender.kafkaConnectRestAppender.File=/opt/logs/connect-rest.log
+    log4j.appender.kafkaConnectRestAppender.layout=org.apache.log4j.PatternLayout
+    log4j.appender.kafkaConnectRestAppender.layout.ConversionPattern=[%d] %p %m (%c)%n
+
+    log4j.logger.org.apache.kafka.connect.runtime.rest={{ .Values.connectConfig.logLevel }}, kafkaConnectRestAppender
+    log4j.additivity.org.apache.kafka.connect.runtime.rest=false
