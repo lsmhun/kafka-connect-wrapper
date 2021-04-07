@@ -71,7 +71,7 @@ http://localhost:8081/subjects/forex-value/versions
 Schema registry is not included in kafka-connect-wrapper, but it can be configured.
 
 Unfortunately JSON handling is not trivial, because of schema definition is not strict. There are 
-libraries, however Confluent uses an other schema description for that. As a result, if you want to 
+libraries, however Confluent uses other schema description for that. As a result, if you want to 
 use Confluent schema registry with JSON, then you should be prepared their 'Magic byte' or you 
 have to include the schema in your message. 
 
@@ -84,6 +84,7 @@ IMPORTANT! This article explains what is the difference between JSON
 
 Other links
 -----------
-https://stackoverflow.com/questions/31324981/how-to-access-host-port-from-docker-container
-
+* https://stackoverflow.com/questions/31324981/how-to-access-host-port-from-docker-container
+* https://github.com/tmcgrath/kafka-connect-examples
+* https://github.com/wushujames/kafka-connector-skeleton
 

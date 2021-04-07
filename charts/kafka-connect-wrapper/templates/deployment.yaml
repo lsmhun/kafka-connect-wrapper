@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kafka-connect-wrapper.fullname" . }}
+  labels:
+    {{- include "kafka-connect-wrapper.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "kafka-connect-wrapper.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "kafka-connect-wrapper.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "kafka-connect-wrapper.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            httpGet:
+              path: /
+              port: http
+          volumeMounts:
+            - name: kafka-connect-wrapper-configmap-volume
+              mountPath:   /opt/connect-config/worker/worker.properties 
+              subPath:  worker.properties
+            - name: kafka-connect-wrapper-configmap-volume
+              mountPath: /opt/config/connect-log4j.properties
+              subPath: log4j
+            {{- if .Values.connectConfig.sink.enabled }}
+            - name: kafka-connect-wrapper-configmap-volume
+              mountPath:   /opt/connect-config/sink/sink.properties
+              subPath:  sink.properties
+            {{- end }}
+            {{- if .Values.connectConfig.source.enabled }}
+            - name: kafka-connect-wrapper-configmap-volume
+              mountPath:   /opt/connect-config/source/source.properties
+              subPath:  source.properties
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: kafka-connect-wrapper-configmap-volume
+          configMap:
+            name: kafka-connect-wrapper-configmap
+  
+    
