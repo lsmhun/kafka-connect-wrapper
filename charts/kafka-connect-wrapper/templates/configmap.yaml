@@ -30,11 +30,19 @@ data:
     value.converter.schemas.enable={{ .Values.connectConfig.source.valueConverterSchemasEnable }}
     value.converter.schema.registry.url={{ .Values.connectConfig.source.valueConverterSchemasRegistryUrl }}
     file={{ .Values.connectConfig.source.file }}
+    connector.class={{ .Values.connectConfig.source.connectorClass }}
+    connection.url={{ .Values.connectConfig.source.connectionUrl }}
+    connection.user={{ .Values.connectConfig.source.connectionUser }}
+    connection.password= {{ .Values.connectConfig.source.connectionPassword }}
 
   sink.properties: |-
     name={{ .Release.Name }}-sink
+    topics={{ .Values.connectConfig.topics }}
+    connection.url={{ .Values.connectConfig.sink.connectionUrl }}
     connector.class={{ .Values.connectConfig.sink.connectorClass }}
-    tasks.max=1
+    connection.user={{ .Values.connectConfig.sink.connectionUser }}
+    connection.password= {{ .Values.connectConfig.sink.connectionPassword }}
+    tasks.max={{ .Values.connectConfig.sink.tasksMax }}
     error.tolerance={{ .Values.connectConfig.sink.errorTolerance }}
     key.converter={{ .Values.connectConfig.sink.keyConverter }}
     key.converter.schemas.enable={{ .Values.connectConfig.sink.keyConverterSchemasEnable }}
@@ -44,11 +52,8 @@ data:
     value.converter.schema.registry.url={{ .Values.connectConfig.sink.valueConverterSchemasRegistryUrl }}
     file={{ .Values.connectConfig.sink.file }}
 
-    auto.create=true
-    auto.evolve=true
-
-    topics={{ .Values.connectConfig.topics }}
-    connection.url={{ .Values.connectConfig.sink.connectionUrl }}
+    auto.create={{ .Values.connectConfig.sink.autoCreate }}
+    auto.evolve={{ .Values.connectConfig.sink.autoEvolve }}
   log4j: |-
     log4j.rootLogger={{ .Values.connectConfig.logLevel }}, stdout
 

@@ -4,7 +4,8 @@ description: Kafka Connect wrapper helm chart
 
 home: https://github.com/lsmhun/kafka-connect-wrapper
 
-icon: https://github.com/lsmhun/kafka-connect-wrapper/tree/main/docs/kcw.png
+maintainers:
+  - name: lsmhun
 
 keywords:
   - kafka connect

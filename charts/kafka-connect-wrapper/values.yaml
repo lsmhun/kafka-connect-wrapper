@@ -90,6 +90,9 @@ connectConfig:
     valueConverterSchemasEnable: false
     valueConverterSchemasRegistryUrl: ""
     file: "/opt/out/kafka.in"
+    connectionUrl: ""
+    connectionUser: ""
+    connectionPassword: ""
   sink:
     enabled: true
     errorTolerance: "all"
@@ -104,3 +107,6 @@ connectConfig:
     valueConverterSchemasEnable: false
     valueConverterSchemasRegistryUrl: ""
     file: "/opt/out/kafka.out"
+    autoCreate: true
+    autoEvolve: true
+    tasksMax: 1
